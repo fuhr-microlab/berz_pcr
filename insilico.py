@@ -236,7 +236,7 @@ def parse_args():
     ap.add_argument("--out", default="products", help="Output folder for products and report.")
     ap.add_argument("--min-len", type=int, default=450, help="Minimum allowed product length (bp).")
     ap.add_argument("--max-len", type=int, default=650, help="Maximum allowed product length (bp).")
-    ap.add_argument("--max-mismatches", type=int, default=0, help="Max mismatches per primer.")
+    ap.add_argument("--max-mismatches", type=int, default=2, help="Max mismatches per primer.")
     ap.add_argument("--three-prime-lock", type=int, default=8, help="Last N bases at 3′ end must match exactly.")
     return ap.parse_args()
 
