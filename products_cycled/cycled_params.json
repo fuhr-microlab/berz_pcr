@@ -9,6 +9,6 @@
   "len_ref": 500,
   "len_penalty": 1.2,
   "sigma_per_cycle": 0.06,
-  "seed": 42,
-  "n_input_products_used": 2
+  "seed": null,
+  "n_input_products_used": 93
 }

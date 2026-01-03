@@ -37,7 +37,9 @@ def run(
     seed=None,
     avoid_duplicates: bool = True,
     max_attempts_multiplier: int = 50,
+    weighted: bool = True,
 ):
+
     output_dir.mkdir(exist_ok=True)
 
     rng = random.Random(seed) if seed is not None else random.Random()
@@ -50,24 +52,19 @@ def run(
     # if you want non weighted genomes use lines below, dont forget other line as well
     
     templates = []
-    for f in fasta_files:
-        for rec_i, (_hdr, seq) in enumerate(read_fasta(f), start=1):
-            if len(seq) >= chunk_size:
-                templates.append((f"{f.name}::rec{rec_i}", seq))
-    
-    """
-    templates = []
     weights = []
+
     for f in fasta_files:
         for rec_i, (_hdr, seq) in enumerate(read_fasta(f), start=1):
             if len(seq) >= chunk_size:
                 template_id = f"{f.name}::rec{rec_i}"
                 templates.append((template_id, seq))
-                weights.append(len(seq) - chunk_size + 1)
-    """
-    
+                if weighted:
+                    weights.append(len(seq) - chunk_size + 1)
+
     if not templates:
         raise SystemExit(f"No sequences of length >= {chunk_size} found in {input_dir}")
+
 
     max_possible = sum(len(seq) - chunk_size + 1 for _, seq in templates)
 
@@ -81,10 +78,11 @@ def run(
     while written < target_reads and attempts < max_attempts:
         attempts += 1
         # if you want non weighted genomes use
-        template_id, seq = rng.choice(templates)
-        # make sure you do the other lines above as well
+        if weighted:
+            template_id, seq = rng.choices(templates, weights=weights, k=1)[0]
+        else:
+            template_id, seq = rng.choice(templates)
 
-        #template_id, seq = rng.choices(templates, weights=weights, k=1)[0]
         max_start = len(seq) - chunk_size
         start = rng.randint(0, max_start)
         end = start + chunk_size
@@ -124,6 +122,10 @@ def parse_args():
     ap.add_argument("--seed", default="1337", help="Random seed, or 'none' for non-reproducible.")
     ap.add_argument("--avoid-dups", type=int, default=1, help="1 to avoid duplicate windows, 0 to allow.")
     ap.add_argument("--max-attempts-mult", type=int, default=50, help="Safety multiplier for sampling attempts.")
+    ap.add_argument("--weighted", type=int, default=1,
+                help="1 = weight by possible window count (length-chunk+1), 0 = uniform per record.")
+
+    
     return ap.parse_args()
 
 if __name__ == "__main__":
@@ -137,4 +139,6 @@ if __name__ == "__main__":
         seed=seed,
         avoid_duplicates=bool(args.avoid_dups),
         max_attempts_multiplier=args.max_attempts_mult,
+        weighted=bool(args.weighted),
+
     )

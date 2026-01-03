@@ -11,6 +11,7 @@ myenv/
 holocene/
 products/
 consensus/
+products_cycled/
 
 # Large data
 *.bam

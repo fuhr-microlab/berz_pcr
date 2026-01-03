@@ -7,6 +7,10 @@ import shutil
 
 # Run with:  streamlit run app.py
 
+import base64
+
+
+
 st.set_page_config(page_title="Berz PCR Pipeline", layout="wide")
 st.title("Berz PCR Pipeline: Shear → In-silico PCR → Thermocycle → Serotype Report")
 
@@ -41,7 +45,7 @@ col1, col2 = st.columns(2)
 
 with col1:
     resources_dir = st.text_input("Input cps loci folder (FASTA)", value="resources")
-    primers_bed = st.text_input("Primer BED file", value="primal_resources/primer.bed")
+    primers_bed = st.text_input("Primer BED file", value="primal_resources_5/primer.bed")
     refs_fasta = st.text_input("cps reference FASTA", value="cps_refs.fasta")
 
 with col2:
@@ -62,11 +66,26 @@ c1, c2, c3, c4 = st.columns(4)
 with c1:
     chunk_size = st.number_input("Chunk size (bp)", min_value=50, max_value=5000, value=1000, step=50)
 with c2:
-    target_reads = st.number_input("Target reads", min_value=1, max_value=100000, value=1000, step=50)
+    target_reads = st.number_input("Target reads", min_value=1, max_value=100000, value=2000, step=50)
 with c3:
     seed = st.text_input("Random seed (blank = random each run)", value="")
 with c4:
-    avoid_dups = st.checkbox("Avoid duplicate windows", value=True)
+    avoid_dups = st.checkbox("Avoid duplicate windows", value=False)
+
+st.subheader("2b) PCR mismatch settings")
+
+max_mismatches = st.number_input(
+    "Max mismatches per primer",
+    min_value=0, max_value=10, value=2, step=1,
+    key="max_mismatches"
+)
+
+three_prime_lock = st.number_input(
+    "3′ end must match exactly (bases)",
+    min_value=0, max_value=30, value=8, step=1,
+    key="three_prime_lock"
+)
+
 
 # NEW: cycling settings
 st.subheader("2b) Thermocycling settings (amplification.py)")
@@ -76,16 +95,24 @@ with cc1:
 with cc2:
     n_out = st.number_input("Cycled output files (N)", min_value=100, max_value=200000, value=10000, step=100)
 with cc3:
-    amp_seed = st.number_input("Cycling RNG seed", min_value=0, max_value=10_000_000, value=42, step=1)
+    amp_seed_text = st.text_input("Cycling RNG seed (leave blank for random)", value="")
+
 
 st.subheader("3) Run controls")
 run_shear = st.checkbox("Run shear (main.py)", value=True)
-run_pcr = st.checkbox("Run in-silico PCR (insilico.py)", value=True)
+run_pcr = st.checkbox("Run in-silico PCR (insilico.py first round deterministic)", value=True)
 
 # NEW
-run_cycle = st.checkbox("Run thermocycling (amplification.py)", value=True)
+run_cycle = st.checkbox("Run thermocycling (amplification.py stochastic amplification)", value=True)
 
 run_report = st.checkbox("Run report (serotype_from_products.py)", value=True)
+
+#stoichastic
+weighted_templates = st.checkbox(
+    "Stochastic Gene Fragmentation (Requires very large target reads count if metagenome is large)",
+    value=True
+)
+
 
 st.divider()
 
@@ -126,6 +153,7 @@ if st.button("▶ Run Pipeline", type="primary"):
                 "--target", str(int(target_reads)),
                 "--seed", seed.strip() if seed.strip() else "none",
                 "--avoid-dups", "1" if avoid_dups else "0",
+                "--weighted", "1" if weighted_templates else "0",
             ]
             run_cmd(cmd, cwd=str(ROOT))
 
@@ -141,8 +169,14 @@ if st.button("▶ Run Pipeline", type="primary"):
                 "--templates", str(ROOT / holocene_dir),
                 "--bed", str(primers_path),
                 "--out", str(products_raw_path),
+
+                "--max-mismatches", str(int(max_mismatches)),
+                "--three-prime-lock", str(int(three_prime_lock)),
             ]
+
             run_cmd(cmd, cwd=str(ROOT))
+
+            
 
         # 2b) Thermocycling (cycled products)
         if run_cycle:
@@ -158,6 +192,10 @@ if st.button("▶ Run Pipeline", type="primary"):
             products_cycled_path = ROOT / products_dir
             reset_dir(products_cycled_path, "PCR products (cycled) folder")
 
+            seed_args = []
+            if amp_seed_text.strip():
+                seed_args = ["--seed", amp_seed_text.strip()]
+
             cmd = [
                 sys.executable, amplification_script,
                 "--report", str(report_path),
@@ -165,8 +203,7 @@ if st.button("▶ Run Pipeline", type="primary"):
                 "--out-dir", str(products_cycled_path),
                 "--cycles", str(int(cycles)),
                 "--n-out", str(int(n_out)),
-                "--seed", str(int(amp_seed)),
-            ]
+            ] + seed_args
             run_cmd(cmd, cwd=str(ROOT))
 
             png = products_cycled_path / "ct_curves.png"
@@ -201,7 +238,7 @@ if st.button("▶ Run Pipeline", type="primary"):
             if ranked.exists():
                 df = pd.read_csv(ranked, sep="\t")
                 st.subheader("Top serotype candidates")
-                st.dataframe(df.head(20), use_container_width=True)
+                st.dataframe(df.head(20), width='stretch')
             else:
                 st.warning("serotype_ranked.tsv not found (report may have failed or output path differs).")
 
