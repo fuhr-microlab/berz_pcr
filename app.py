@@ -258,7 +258,7 @@ if st.button("▶ Run Pipeline", type="primary"):
                 st.subheader("Top serotype candidates")
                 st.dataframe(df.head(20), width='stretch')
             else:
-                st.warning("serotype_ranked.tsv not found (report may have failed or output path differs).")
+                st.warning("serotype_ranked.tsv not found (report may have failed or output path differs or no amplification occured with given sequences).")
 
         st.success("Pipeline finished.")
 

@@ -262,7 +262,7 @@ def main():
                 help="How many synthetic qPCR replicates to simulate for Ct curves.")
     
 
-    ap.add_argument("--start_lambda", type=float, default=0.3,
+    ap.add_argument("--start_lambda", type=float, default=0.8,
                         help="Mean starting copies per target (Poisson). Use <1 for sparse templates.")
     ap.add_argument("--eff_decay", type=float, default=0.12,
                         help="Per-cycle exponential decay of efficiency. Higher = slower late-cycle growth.")

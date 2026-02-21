@@ -21,3 +21,7 @@ products_cycled/
 # OS junk
 .DS_Store
 Thumbs.db
+
+#junk
+metagenomic_generator/
+

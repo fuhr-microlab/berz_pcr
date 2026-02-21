@@ -1,7 +1,7 @@
-	test1.fasta	test2.fasta	test3.fasta	test4.fasta	test5.fasta	test6.fasta
+	test1.fasta	test3.fasta	test4.fasta	test5.fasta	test6.fasta	test7.fasta
 test1.fasta	100.000000	NA	NA	NA	NA	NA
-test2.fasta	NA	100.000000	NA	NA	NA	NA
-test3.fasta	NA	NA	100.000000	NA	NA	NA
-test4.fasta	NA	NA	NA	100.000000	NA	NA
-test5.fasta	NA	NA	NA	NA	100.000000	NA
-test6.fasta	NA	NA	NA	NA	NA	100.000000
+test3.fasta	NA	100.000000	NA	NA	NA	NA
+test4.fasta	NA	NA	100.000000	NA	NA	NA
+test5.fasta	NA	NA	NA	100.000000	NA	NA
+test6.fasta	NA	NA	NA	NA	100.000000	NA
+test7.fasta	NA	NA	NA	NA	NA	100.000000
