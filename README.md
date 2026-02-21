@@ -93,6 +93,9 @@ You can now view your Streamlit app in your browser.
 
 after this you should see the UI
 
+![Description](images/Pasted image 20260221121009.png)
+
+
 ![[Pasted image 20260221121009.png]]
 
 1. Set input cps loci folder with either negative control metagenome or spike in your target gene primers to test detection (This script was optimized for ARCTIC style primer schemes from PrimalScheme)
@@ -100,24 +103,32 @@ after this you should see the UI
 2. Load primers into one .bed file and set location
 3. Set reference fasta with full target amplicons so you can get presence absence before assembly attempt
 
+![Description](images/Pasted image 20260221122140.png)
+
 
 ![[Pasted image 20260221122140.png]]
 4. If you dont care about stochastic shearing simply set target read length to one that suits your assays beadbeater times and set total reads to equal the total basepairs in your metagenome. For example if you have 10,000,000 BP total, you want 10,000,000/ read length = total reads. Also check avoid duplicate windows. If you don't have a high enough read length/read count you may not detect your target even if it is there.
 5. basic settings are
 
+![Description](images/Pasted image 20260221122311.png)
+
 ![[Pasted image 20260221122311.png]]
 
 6. after running you should see something like this depending on the run
 
+
+![Description](images/Pasted image 20260221122344.png)
 ![[Pasted image 20260221122344.png]]
 
 This would mean 35B was detected and that 1903 bases of my pcr product match my reference target. 06C only matched 1590, and since my original target was apprx. 2000 bp, either the shearing process did not give me an amplifiable read or it was poor quality dna loaded into resources. (if you used the same resource dna as the template and primal scheme primer building substrate the only explanation is shearing)
 
 7. At this point you can run greedy and denovo scripts manually to assemble your targets back into their full lengths. These scripts are planned to be worked into the UI at some point but not as of this date. The instructions for them are each at the top of their .py scripts. denovo and greedy outputs both go to the products folder.
+![Description](images/Pasted image 20260221123133.png)
 ![[Pasted image 20260221123133.png]]
 
 You can verify your reassemblies via blast on ncbi to make sure what you started with is actually what you ended up with, the strictness of the assemblers can be modified via their script calls or by edits to their respective scripts.
 
+![Description](images/Pasted image 20260221123712.png)
 ![[Pasted image 20260221123712.png]]
 
 as you can see, after verifying it is clear that 35B is in fact the closest match and their is ideally no other serotypes near this PID/COV, however with some serotypes similarity will be unavoidable. With this in mind it is always wise to stress test your assay by putting offtarget serotypes in your resources folder for these tests.
