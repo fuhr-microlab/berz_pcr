@@ -1,3 +1,15 @@
+# ABSTRACT
+
+Title:
+
+Computational Design and In Silico Validation of Tiled Amplicon Schemes for Streptococcus pneumoniae Serotype Detection in Wastewater
+
+Abstract:
+
+Streptococcus pneumoniae is a major cause of disease among young children and the elderly worldwide, yet community-level surveillance remains limited by culture dependence and serotype complexity. Wastewater surveillance has historically been a tool for monitoring population-level health trends. However, applying this approach to S. pneumoniae presents unique challenges, as wastewater samples contain highly fragmented, low-abundance, and genetically mixed DNA. The goal of this project is to determine optimal amplicon lengths and primer placement strategies. To address the complex process of serotype unique primer generation I developed a computational pipeline to design, simulate, and evaluate tiled PCR amplicon schemes targeting capsular polysaccharide synthesis (cps) loci across clinically relevant S. pneumoniae serotypes. Using 231 reference genomes (35 serotypes) from the National Center for Biotechnology Information databases, I generated overlapping amplicons at multiple lengths (100–600 bp) and assessed primer performance through in silico PCR, simulated DNA shearing, Monte Carlo amplification cycles, and read-mapping–based hit analysis. I implemented custom Python scripts to quantify primer hit rates, mismatch tolerance, and serotype specificity under wastewater-like degradation conditions. Preliminary results indicate that shorter tiled amplicons substantially improve detection robustness for fragmented DNA while maintaining serotype discrimination when primers are constrained to conserved cps-adjacent regions. The pipeline identifies optimal amplicon lengths and primer placements that balance sensitivity and specificity across mixed-serotype samples. These findings support the feasibility of wastewater-based pneumococcal serotype surveillance using targeted sequencing and provide a financially aware and scalable framework for assay optimization prior to wet-lab validation.
+
+
+
 # 🧬 Berz PCR Pipeline
 
 ### Shear → In-silico PCR → Thermocycle → Assembly → Serotype Ranking
