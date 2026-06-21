@@ -21,12 +21,14 @@ def set_bg(image_path):
             background-image: url("data:image/png;base64,{encoded}");
             background-size: cover;
         }}
+
+        
         </style>
         """,
         unsafe_allow_html=True
     )
 
-set_bg("background3.png")
+set_bg("background.png")
 
 
 st.set_page_config(page_title="Berz PCR Pipeline", layout="wide")
@@ -82,9 +84,9 @@ amplification_script = st.text_input("Amplification script", value="amplificatio
 st.subheader("2) Shearing settings (main.py)")
 c1, c2, c3, c4 = st.columns(4)
 with c1:
-    chunk_size = st.number_input("Chunk size (bp)", min_value=50, max_value=5000, value=1000, step=50)
+    chunk_size = st.number_input("Chunk size (bp)", min_value=50, max_value=8000, value=1000, step=50)
 with c2:
-    target_reads = st.number_input("Target reads", min_value=1, max_value=100000, value=2000, step=50)
+    target_reads = st.number_input("Target reads", min_value=1, max_value=20000, value=2000, step=50)
 with c3:
     seed = st.text_input("Random seed (blank = random each run)", value="")
 with c4:
@@ -245,12 +247,7 @@ if st.button("▶ Run Pipeline", type="primary"):
             cmd += ["--products", str(products_used)]  # safe if script accepts it
             cmd += ["--refs", str(refs_path)]          # safe if script accepts it
 
-            try:
-                run_cmd(cmd, cwd=str(ROOT))
-            except RuntimeError:
-                # Fallback: run without args (old behavior)
-                st.warning("Report script did not accept --products/--refs; running without args.")
-                run_cmd([sys.executable, report_script], cwd=str(ROOT))
+            run_cmd(cmd, cwd=str(ROOT))
 
             ranked = products_used / "serotype_ranked.tsv"
             if ranked.exists():

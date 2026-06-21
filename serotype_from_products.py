@@ -165,7 +165,7 @@ def main():
     out_ranked = products_dir / "serotype_ranked.tsv"
     out_top = products_dir / "serotype_top.txt"
 
-    build_index(args.minimap2, refs, mmi, args.rebuild_index)
+    build_index(args.minimap2, refs, mmi, rebuild=True)
     align(args.minimap2, args.samtools, mmi, all_fa, out_bam)
     compute_coverage(args.samtools, out_bam, out_cov)
     rank(refs, out_bam, out_cov, out_ranked, out_top, args.samtools, args.mapq_min)
